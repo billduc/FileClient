@@ -31,6 +31,25 @@ using namespace std;
 /*
  * 
  */
+
+string getFileName(string filepath){
+    int post = -1;
+    //linux operator
+    for(int i = sizeof(filepath) - 1; i >=0; --i){
+        if (filepath[i] == '/')
+        {
+            post = i;
+            break;
+        }
+    }
+    if (post == -1)
+        return string(filepath);
+    else{
+        string filename = filepath.substr(post+1, sizeof(filepath));
+        return filename;
+    }
+}
+
 int main(int argc, char** argv) {
     int socketfd, port, n;
     struct sockaddr_in serv_addr;
@@ -40,7 +59,7 @@ int main(int argc, char** argv) {
     
     //check args
     if (argc < 3){
-        cerr << "usage: "<< argv[0] << " <hostname> <port> <file patch>" << endl;
+        cerr << "usage: "<< argv[0] << " <hostname> <port> <file path>" << endl;
         exit(EXIT_FAILURE);
     }
     
@@ -68,9 +87,13 @@ int main(int argc, char** argv) {
     
     printf("Server connected \n");
     
-    char cmd[] = "upload untitled.c";
+    string filepath = argv[3];
     
-    send (socketfd, cmd, sizeof(cmd), 0);
+    cout << "file name: " <<  getFileName(filepath) << endl;
+    
+    string cmd = "upload " + getFileName(filepath);
+    
+    send (socketfd, cmd.c_str(), sizeof(cmd), 0);
     
     recv(socketfd, buffer, sizeof(buffer), 0 );
     cout <<"server answer: " << buffer << endl;
@@ -80,8 +103,9 @@ int main(int argc, char** argv) {
     //n = write(socketfd, buffer, strlen(buffer));
     
     //string filepath = "/home/hydra/Desktop/untitled.c";
-    string filepath = argv[3];
-            
+    
+    //string filepath = argv[3];
+    
     FILE * fp = fopen(filepath.c_str(), "r");
     
     if(fp == NULL)
