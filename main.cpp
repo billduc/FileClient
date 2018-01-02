@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <netdb.h>
+#include <cerrno>
 
 using namespace std;
 
@@ -65,29 +66,40 @@ int main(int argc, char** argv) {
     if (connect(socketfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
         cerr << "ERROR connecting" << endl;
     
-    printf("Please enter the message: ");
+    printf("Server connected \n");
+    
+    char cmd[] = "upload untitled.c";
+    
+    send (socketfd, cmd, sizeof(cmd), 0);
+    
+    recv(socketfd, buffer, sizeof(buffer), 0 );
+    cout <<"server answer: " << buffer << endl;
     
     bzero(buffer,256);
     fgets(buffer,255,stdin);
     
-    n = write(socketfd, buffer, strlen(buffer));
+    //n = write(socketfd, buffer, strlen(buffer));
     
     string filepath = "/home/hydra/Desktop/untitled.c";
     
     FILE * fp = fopen(filepath.c_str(), "r");
     fseek(fp, 0, SEEK_END);
-   
+    
+    int fs_block_sz;
+    while ((fs_block_sz == fread(buffer , sizeof(char), 256, fp )) > 0 ){
+        if (send(socketfd, buffer, fs_block_sz,0) < 0){
+            cerr << "ERROR: Failed to send file " << filepath <<". (errno = " << errno << ")\n";
+            break;
+        }
+        bzero(buffer, 256);
+    }
+    
+    printf("Ok File %s from Client was Sent!\n", filepath);
+    
     long FileSize = ftell(fp);
     
     cout << FileSize << endl;
     
-    if (n < 0) 
-         cerr << "ERROR writing to socket" << endl;
-    bzero(buffer, 256 );
-    n = read(socketfd, buffer, 255);
-    if (n < 0) 
-         cerr << "ERROR reading from socket" << endl;
-    printf("%s\n", buffer);
     
     close(socketfd);
     
