@@ -76,17 +76,25 @@ int main(int argc, char** argv) {
     cout <<"server answer: " << buffer << endl;
     
     bzero(buffer,256);
-    fgets(buffer,255,stdin);
     
     //n = write(socketfd, buffer, strlen(buffer));
     
     string filepath = "/home/hydra/Desktop/untitled.c";
     
     FILE * fp = fopen(filepath.c_str(), "r");
-    fseek(fp, 0, SEEK_END);
+    
+    if(fp == NULL)
+    {
+        printf("ERROR: File %s not found.\n", filepath);
+        exit(1);
+    }
+    
+    //fseek(fp, 0, SEEK_END);
+    bzero(buffer, sizeof buffer); 
     
     int fs_block_sz;
-    while ((fs_block_sz == fread(buffer , sizeof(char), 256, fp )) > 0 ){
+    while ( (fs_block_sz = fread(buffer , sizeof(char), 256, fp ) ) > 0 ){
+        cout << "send file " << fs_block_sz << endl;
         if (send(socketfd, buffer, fs_block_sz,0) < 0){
             cerr << "ERROR: Failed to send file " << filepath <<". (errno = " << errno << ")\n";
             break;
