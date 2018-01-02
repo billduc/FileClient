@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     
     //check args
     if (argc < 3){
-        cerr << "usage: "<< argv[0] << " <hostname> <port>" << endl;
+        cerr << "usage: "<< argv[0] << " <hostname> <port> <file patch>" << endl;
         exit(EXIT_FAILURE);
     }
     
@@ -79,8 +79,9 @@ int main(int argc, char** argv) {
     
     //n = write(socketfd, buffer, strlen(buffer));
     
-    string filepath = "/home/hydra/Desktop/untitled.c";
-    
+    //string filepath = "/home/hydra/Desktop/untitled.c";
+    string filepath = argv[3];
+            
     FILE * fp = fopen(filepath.c_str(), "r");
     
     if(fp == NULL)
