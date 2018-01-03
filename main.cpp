@@ -28,6 +28,7 @@
 
 using namespace std;
 
+#define MAX_SIZE 409600
 /*
  * 
  */
@@ -55,7 +56,7 @@ int main(int argc, char** argv) {
     struct sockaddr_in serv_addr;
     struct hostent *server;
     
-    char buffer[256];
+    char buffer[MAX_SIZE];
     
     //check args
     if (argc < 3){
@@ -98,7 +99,7 @@ int main(int argc, char** argv) {
     recv(socketfd, buffer, sizeof(buffer), 0 );
     cout <<"server answer: " << buffer << endl;
     
-    bzero(buffer,256);
+    bzero(buffer,MAX_SIZE);
     
     //n = write(socketfd, buffer, strlen(buffer));
     
@@ -118,13 +119,13 @@ int main(int argc, char** argv) {
     bzero(buffer, sizeof buffer); 
     
     int fs_block_sz;
-    while ( (fs_block_sz = fread(buffer , sizeof(char), 256, fp ) ) > 0 ){
+    while ( (fs_block_sz = fread(buffer , sizeof(char), MAX_SIZE, fp ) ) > 0 ){
         cout << "send file " << fs_block_sz << endl;
         if (send(socketfd, buffer, fs_block_sz,0) < 0){
             cerr << "ERROR: Failed to send file " << filepath <<". (errno = " << errno << ")\n";
             break;
         }
-        bzero(buffer, 256);
+        bzero(buffer, MAX_SIZE);
     }
     
     printf("Ok File %s from Client was Sent!\n", filepath);
