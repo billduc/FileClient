@@ -46,7 +46,8 @@ string getFileName(string filepath){
     if (post == -1)
         return string(filepath);
     else{
-        string filename = filepath.substr(post+1, sizeof(filepath));
+        //cout << post  <<" " << filepath << " " << sizeof(filepath)<< " " << filepath.length() - post << endl;
+        string filename = filepath.substr(post+1, filepath.length() - post);
         return filename;
     }
 }
@@ -89,12 +90,12 @@ int main(int argc, char** argv) {
     printf("Server connected \n");
     
     string filepath = argv[3];
-    
+    //cout << filepath << endl;
     cout << "file name: " <<  getFileName(filepath) << endl;
     
     string cmd = "upload " + getFileName(filepath);
     
-    send (socketfd, cmd.c_str(), sizeof(cmd), 0);
+    send (socketfd, cmd.c_str(), cmd.length(), 0);
     
     recv(socketfd, buffer, sizeof(buffer), 0 );
     cout <<"server answer: " << buffer << endl;
