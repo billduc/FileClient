@@ -26,6 +26,8 @@
 #include <netdb.h>
 #include <cerrno>
 
+#include "header/md5.h"
+
 using namespace std;
 
 #define MAX_SIZE 409600
@@ -53,10 +55,13 @@ string getFileName(string filepath){
 }
 
 int main(int argc, char** argv) {
+    
+    cout << md5("trungduc") << endl;
     int socketfd, port, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
     
+   
     char buffer[MAX_SIZE];
     
     //check args
