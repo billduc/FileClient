@@ -93,6 +93,23 @@ int main(int argc, char** argv) {
         cerr << "ERROR connecting" << endl;
     
     printf("Server connected \n");
+
+    //auth user agent
+    string md5code = md5("test");
+    send(socketfd, md5code.c_str(), md5code.length(), 0);
+
+    //confirm form server
+    bool okConn = false;
+    recv(socketfd, buffer, sizeof(buffer), 0);
+    if (strcmp(buffer, "200 ok") == 0){
+        cout << "auth ok" << endl;
+        okConn = true;
+    }
+    else{
+        cout << "fail connection" << endl; 
+    }
+
+    if (okConn){
     
     string filepath = argv[3];
     //cout << filepath << endl;
@@ -140,6 +157,8 @@ int main(int argc, char** argv) {
     
     cout << FileSize << endl;
     
+    }
+
     
     close(socketfd);
     
